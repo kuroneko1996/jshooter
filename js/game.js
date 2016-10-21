@@ -3,15 +3,14 @@
 
 	class Game {
 
-		constructor(drawing, width, height, scl) {
-			this.fps = 10;
-			this.scl = scl;
-			this.width = width;
-			this.height = height;
+		constructor(params) {
+			this.fps = params.fps || 30;
+			this.scl = params.scl;
+			this.width = params.width;
+			this.height = params.height;
+			this.drawing = params.drawing;
+
 			this.score = 0;
-
-			this.drawing = drawing;
-
 			this.now = 0;
 			this.then = Date.now();
 			this.interval = 1000 / this.fps;
@@ -41,8 +40,18 @@
 			}
 		}
 
-		addKeydown(onkeydown) {
-			document.addEventListener('keydown',    onkeydown,    false);
+		addKeyDown(handler) {
+			document.addEventListener('keydown', function(event) {
+				event.preventDefault();
+				handler(event);
+			}, false);
+		}
+
+		addKeyUp(handler) {
+			document.addEventListener('keyup', function(event) {
+				event.preventDefault();
+				handler(event);
+			}, false);
 		}
 
 		dist(x1, y1, x2, y2) {
@@ -51,5 +60,5 @@
 		}
 	}
 
-	window.GameEngine = Game;
+	window.KGame = Game;
 })();
