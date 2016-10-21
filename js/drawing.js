@@ -9,10 +9,8 @@
         rect(sx, sy, ex, ey, fillStyle = 'white') {
             var context = this.context;
             context.beginPath();
-            context.rect(sx, sy, ex, ey);
             context.fillStyle = fillStyle;
-            context.fill();
-            context.stroke();
+            context.fillRect(sx, sy, ex, ey);
         }
 
         clear() {
