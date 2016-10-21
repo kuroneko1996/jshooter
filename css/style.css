@@ -1,78 +1,78 @@
 html {
-	-ms-touch-action: manipulation;
-	touch-action: manipulation;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
 }
 
 body {
-	background-color: #303030;
-	margin: 0;
-	padding: 0;
+    background-color: #303030;
+    margin: 0;
+    padding: 0;
 }
 
 #container {
-	width: 100%;
-	margin: 0 auto;
-	margin-top: 10px;
-	padding: 0;
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 10px;
+    padding: 0;
 }
 
 #mycanvas {
-	background-color: #140c1c;
+    background-color: #140c1c;
 
-	padding: 0;
+    padding: 0;
     margin: auto;
     display: block;
 }
 
 .control-buttons {
-	width: 200px;
-	min-height: 200px;
-	padding: 0;
-	margin: 20px auto;
+    width: 200px;
+    min-height: 200px;
+    padding: 0;
+    margin: 20px auto;
 }
 
 .control-buttons div {
-	width: 64px;
-	height: 64px;
-	padding: 0;
-	box-sizing: border-box;
-	border: 0;
+    width: 64px;
+    height: 64px;
+    padding: 0;
+    box-sizing: border-box;
+    border: 0;
 }
 
 #arrow_up {
-	background-image: url('../imgs/arrows.png');
-	background-position: 0 0;
-	margin: 0 auto;
-	margin-bottom: 10px;
+    background-image: url('../imgs/arrows.png');
+    background-position: 0 0;
+    margin: 0 auto;
+    margin-bottom: 10px;
 }
 
 #arrow_down {
-	background-image: url('../imgs/arrows.png');
-	background-position: 300% 0;
-	margin: 0 auto;
-	margin-top: 10px;
+    background-image: url('../imgs/arrows.png');
+    background-position: 300% 0;
+    margin: 0 auto;
+    margin-top: 10px;
 }
 
 .control-buttons .horizontal-buttons {
-	width: 200px;
-	height: 64px;
-	margin: 0 auto;
+    width: 200px;
+    height: 64px;
+    margin: 0 auto;
 }
 
 
 #arrow_left {
-	background-image: url('../imgs/arrows.png');
-	background-position: 200% 0;
-	margin-right: 36px;
+    background-image: url('../imgs/arrows.png');
+    background-position: 200% 0;
+    margin-right: 36px;
 }
 
 #arrow_right {
-	background-image: url('../imgs/arrows.png');
-	background-position: 100% 0;
-	margin-left: 36px;
+    background-image: url('../imgs/arrows.png');
+    background-position: 100% 0;
+    margin-left: 36px;
 }
 
 #arrow_left, #arrow_right {
-	padding: 0;
-	display: inline-block;
+    padding: 0;
+    display: inline-block;
 }

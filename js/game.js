@@ -1,64 +1,83 @@
 "use strict";
 (function () {
 
-	class Game {
+    class Game {
 
-		constructor(params) {
-			this.fps = params.fps || 30;
-			this.scl = params.scl;
-			this.width = params.width;
-			this.height = params.height;
-			this.drawing = params.drawing;
+        constructor(params) {
+            this.fps = params.fps || 30;
+            this.scl = params.scl;
+            this.width = params.width;
+            this.height = params.height;
+            this.drawing = params.drawing;
 
-			this.score = 0;
-			this.now = 0;
-			this.then = Date.now();
-			this.interval = 1000 / this.fps;
-			this.delta = 0;
-		}
+            this.score = 0;
+            this.now = 0;
+            this.then = Date.now();
+            this.interval = 1000 / this.fps;
+            this.delta = 0;
 
-		start() {
-			var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-                              	window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+            this.Key = {
+                LEFT:     37,
+                UP:       38,
+                RIGHT:    39,
+                DOWN:     40,
+                SPACE:    32,
 
-	        this.OnEachFrame = requestAnimationFrame.bind(window); 
+                _pressed: {},
 
-	        this.OnEachFrame(this.run.bind(this));
-		}
+                isDown: function(keyCode) {
+                    return this._pressed[keyCode];
+                },
+                onKeydown: function(event) {
+                    this._pressed[event.keyCode] = true;
+                },
+                onKeyup: function(event) {
+                    delete this._pressed[event.keyCode];
+                }
+            }
+        }
 
-		run() {
-			this.OnEachFrame(this.run.bind(this));
+        start() {
+            var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                                window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
-			this.now = Date.now();
-			this.delta = this.now - this.then;
+            this.OnEachFrame = requestAnimationFrame.bind(window); 
 
-			if (this.delta > this.interval) {
-				this.then = this.now - (this.delta % this.interval);
+            this.OnEachFrame(this.run.bind(this));
+        }
 
-				this.drawing.clear();
-				this.logic();
-			}
-		}
+        run() {
+            this.OnEachFrame(this.run.bind(this));
 
-		addKeyDown(handler) {
-			document.addEventListener('keydown', function(event) {
-				event.preventDefault();
-				handler(event);
-			}, false);
-		}
+            this.now = Date.now();
+            this.delta = this.now - this.then;
 
-		addKeyUp(handler) {
-			document.addEventListener('keyup', function(event) {
-				event.preventDefault();
-				handler(event);
-			}, false);
-		}
+            if (this.delta > this.interval) {
+                this.then = this.now - (this.delta % this.interval);
 
-		dist(x1, y1, x2, y2) {
-			var d = Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
-			return d;
-		}
-	}
+                this.drawing.clear();
+                this.logic();
+            }
+        }
 
-	window.KGame = Game;
+        addKeyboardInput() {
+            var self = this;
+            document.addEventListener('keydown', function(event) {
+                event.preventDefault();
+                self.Key.onKeydown(event);
+            }, false);
+
+            document.addEventListener('keyup', function(event) {
+                event.preventDefault();
+                self.Key.onKeyup(event);
+            }, false);
+        }
+
+        dist(x1, y1, x2, y2) {
+            var d = Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
+            return d;
+        }
+    }
+
+    window.KGame = Game;
 })();
