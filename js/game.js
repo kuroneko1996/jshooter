@@ -77,6 +77,11 @@
             var d = Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
             return d;
         }
+
+        rnd(min, max)
+        {
+          return Math.floor(Math.random() * (max - min)) + min;
+        }
     }
 
     window.KGame = Game;

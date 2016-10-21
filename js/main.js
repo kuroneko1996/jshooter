@@ -9,10 +9,34 @@
     drawing.font('14px "Lucida Console", Monaco, monospace');
     var ship = new KGame.Ship(game, width / 2, height - 40);
 
+    var stars = [];
+
+    for (let i = 0; i < 128; i++) {
+        stars.push({
+            x: game.rnd(0, game.width),
+            y: game.rnd(0, game.height),
+            speed: game.rnd(1, 3) + 1
+        });
+    }
     game.addKeyboardInput();
 
     game.logic = function () {
+        // update
         ship.update();
+        for (let i = stars.length - 1; i >= 0; i--) {
+            let star = stars[i];
+            star.y += star.speed;
+            if (star.y > game.height) {
+                star.x = game.rnd(1, game.width);
+                star.y = 0;
+            }
+        }
+
+
+        // draw
+        for (let i = stars.length - 1; i >= 0; i--) {
+            drawing.rect(stars[i].x, stars[i].y, 2, 2, '#8595a1')
+        }
         ship.draw();
     };
 
