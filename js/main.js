@@ -8,6 +8,7 @@
     var game = new KGame({drawing: drawing, width: width, height: height, scl: scl});
     drawing.font('14px "Lucida Console", Monaco, monospace');
     var ship = new KGame.Ship(game, width / 2, height - 40);
+    ship.setSprite(document.getElementById('ship_image'));
 
     var stars = [];
 

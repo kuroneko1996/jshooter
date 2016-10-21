@@ -15,12 +15,17 @@
 
             this.xdir = this.ydir = 0;
 
-            this.width = 20;
-            this.height = 20;
+            this.width = 16;
+            this.height = 16;
 
             this.bullets = [];
-            this.bulletWidth = 4;
-            this.bulletHeight = 6;
+            this.bulletWidth = 2;
+            this.bulletHeight = 4;
+            this.bulletColor = '#d04648';
+        }
+
+        setSprite(img) {
+            this.sprite = img;
         }
 
         move() {
@@ -89,10 +94,14 @@
 
         draw() {
             var self = this;
-            this.drawing.rect(this.x, this.y, this.width, this.height, this.color);
+            if (!this.sprite) {
+                this.drawing.rect(this.x, this.y, this.width, this.height, this.color);
+            } else {
+                this.drawing.context.drawImage(this.sprite, this.x, this.y);
+            }
 
             this.bullets.forEach(function (bullet) {
-                self.drawing.rect(bullet.x, bullet.y, self.bulletWidth, self.bulletHeight, '#d27d2c');
+                self.drawing.rect(bullet.x, bullet.y, self.bulletWidth, self.bulletHeight, self.bulletColor);
             });
         }
     }
