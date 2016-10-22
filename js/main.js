@@ -16,7 +16,7 @@
         stars.push({
             x: game.rnd(0, game.width),
             y: game.rnd(0, game.height),
-            speed: game.rnd(1, 3) + 1
+            speed: game.rnd(1, 4) + 1
         });
     }
     game.addKeyboardInput();
