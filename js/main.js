@@ -4,13 +4,16 @@
     var height = 256;
     var scl = 1;
 
+    var sprites = loadAssets();
+
     var drawing = new Drawing('mycanvas');
     var game = new KGame({drawing: drawing, width: width, height: height, scl: scl});
     drawing.font('14px "Lucida Console", Monaco, monospace');
     var ship = new KGame.Ship(game, width / 2, height - 40);
-    ship.setSprite(document.getElementById('ship_image'));
+    ship.setSprite(sprites['ship']);
 
     var stars = [];
+    var enemies = [];
 
     for (let i = 0; i < 128; i++) {
         stars.push({
@@ -19,6 +22,15 @@
             speed: game.rnd(1, 4) + 1
         });
     }
+
+    for (let i = 0; i < 10; i++) {
+        enemies.push({
+            x: 8 + i*32,
+            y: 40 + i*8,
+            sprite: sprites['enemy1']
+        });
+    }
+
     game.addKeyboardInput();
 
     game.logic = function () {
@@ -38,6 +50,10 @@
         for (let i = stars.length - 1; i >= 0; i--) {
             drawing.rect(stars[i].x, stars[i].y, 2, 2, '#8595a1')
         }
+        for (let i = enemies.length - 1; i >= 0; i--) {
+            drawing.context.drawImage(enemies[i].sprite, enemies[i].x, enemies[i].y);
+        }
+
         ship.draw();
     };
 
@@ -56,5 +72,12 @@
                 ship.dir(...name2dir[btnName]);
             });
         }
+    }
+
+    function loadAssets() {
+        let sprites = [];
+        sprites['ship'] = document.getElementById('ship_image')
+        sprites['enemy1'] = document.getElementById('enemy1_image');
+        return sprites;
     }
 })();
