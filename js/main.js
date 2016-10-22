@@ -6,14 +6,30 @@
 
     var sprites = loadAssets();
 
+    var stars = [];
+    var enemies = [];
+    var bullets = [];
+
+    var bulletWidth = 2;
+    var bulletHeight = 4;
+    var bulletColor = '#d04648';
+
     var drawing = new Drawing('mycanvas');
     var game = new KGame({drawing: drawing, width: width, height: height, scl: scl});
     drawing.font('14px "Lucida Console", Monaco, monospace');
     var ship = new KGame.Ship(game, width / 2, height - 40);
     ship.setSprite(sprites['ship']);
 
-    var stars = [];
-    var enemies = [];
+    ship.setFire(function() {
+        let bullet = {
+                x: this.x + this.width / 2 - bulletWidth / 2,
+                y: this.y - 2,
+                xspeed: 0,
+                yspeed: -this.speed-1
+            };
+        bullets.push(bullet);
+    });
+
 
     for (let i = 0; i < 128; i++) {
         stars.push({
@@ -44,6 +60,7 @@
                 star.y = 0;
             }
         }
+        moveBullets();
 
 
         // draw
@@ -55,6 +72,7 @@
         }
 
         ship.draw();
+        drawBullets();
     };
 
     assignTouchControls();
@@ -62,6 +80,33 @@
     game.start();
 
     // functions
+    function moveBullets() {
+        for (var i = bullets.length - 1; i >= 0; i--) {
+            let bullet = bullets[i];
+            bullet.x += bullet.xspeed;
+            bullet.y += bullet.yspeed;
+
+            // remove bullets beyond the screen
+            if (bullet.x < 0 || bullet.x > game.width || bullet.y < 0 || bullet.y > game.height) {
+                bullets.splice(i, 1);
+            }
+
+            enemies.forEach(function (enemy, i) {
+                if (game.collision(bullet, enemy)) {
+                    enemies.splice(i, 1);
+                    ship.score += 10;
+                }
+            });
+        }
+    }
+
+    function drawBullets() {
+        bullets.forEach(function (bullet) {
+            drawing.rect(bullet.x, bullet.y, bulletWidth, bulletHeight, bulletColor);
+        });
+    }
+
+
     function assignTouchControls() {
         var name2dir = {
             'arrow_up': [0, -1], 'arrow_down': [0, 1], 'arrow_left': [-1, 0], 'arrow_right': [1, 0]

@@ -17,15 +17,15 @@
 
             this.width = 16;
             this.height = 16;
-
-            this.bullets = [];
-            this.bulletWidth = 2;
-            this.bulletHeight = 4;
-            this.bulletColor = '#d04648';
+            this.score = 0;
         }
 
         setSprite(img) {
             this.sprite = img;
+        }
+
+        setFire(func) {
+            this.fire = func;
         }
 
         move() {
@@ -50,31 +50,9 @@
             this.y = newY;
         }
 
-        moveBullets() {
-            for (var i = this.bullets.length - 1; i >= 0; i--) {
-                let bullet = this.bullets[i];
-                bullet.x += bullet.xspeed;
-                bullet.y += bullet.yspeed;
-                // remove bullets beyond the screen
-                if (bullet.x < 0 || bullet.x > this.game.width || bullet.y < 0 || bullet.y > this.game.height) {
-                    this.bullets.splice(i, 1);
-                }
-            }
-        }
-
         dir(x, y) {
             this.xdir = x;
             this.ydir = y;
-        }
-
-        fire() {
-            let bullet = {
-                x: this.x + this.width / 2 - this.bulletWidth / 2,
-                y: this.y - 2,
-                xspeed: 0,
-                yspeed: -this.speed-1
-            };
-            this.bullets.push(bullet);
         }
 
         update() {
@@ -88,7 +66,6 @@
             if (Key.isDown(Key.Z)) this.fire();
 
             this.move();
-            this.moveBullets();
 
             this.xdir = this.ydir = 0;
         }
@@ -100,10 +77,6 @@
             } else {
                 this.drawing.context.drawImage(this.sprite, this.x, this.y);
             }
-
-            this.bullets.forEach(function (bullet) {
-                self.drawing.rect(bullet.x, bullet.y, self.bulletWidth, self.bulletHeight, self.bulletColor);
-            });
         }
     }
 
