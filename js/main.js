@@ -16,7 +16,7 @@
 
     var drawing = new Drawing('mycanvas');
     var game = new KGame({drawing: drawing, width: width, height: height, scl: scl});
-    drawing.font('14px "Lucida Console", Monaco, monospace');
+    drawing.font('12px "Lucida Console", Monaco, monospace');
     var ship = new KGame.Ship(game, width / 2, height - 40);
     ship.setSprite(sprites['ship']);
 
@@ -25,7 +25,10 @@
                 x: this.x + this.width / 2 - bulletWidth / 2,
                 y: this.y - 2,
                 xspeed: 0,
-                yspeed: -this.speed-1
+                yspeed: -this.speed-1,
+                box: {
+                    x1: 0, y1: 0, x2: bulletWidth, y2: bulletHeight
+                }
             };
         bullets.push(bullet);
     });
@@ -43,7 +46,10 @@
         enemies.push({
             x: 8 + i*32,
             y: 40 + i*8,
-            sprite: sprites['enemy1']
+            sprite: sprites['enemy1'],
+            box: {
+                x1: 1, y1: 4, x2: 14, y2: 11
+            }
         });
     }
 
@@ -73,6 +79,7 @@
 
         ship.draw();
         drawBullets();
+        drawScore();
     };
 
     assignTouchControls();
@@ -94,7 +101,7 @@
             enemies.forEach(function (enemy, i) {
                 if (game.collision(bullet, enemy)) {
                     enemies.splice(i, 1);
-                    ship.score += 10;
+                    game.score += 10;
                 }
             });
         }
@@ -104,6 +111,11 @@
         bullets.forEach(function (bullet) {
             drawing.rect(bullet.x, bullet.y, bulletWidth, bulletHeight, bulletColor);
         });
+    }
+
+    function drawScore() {
+        drawing.fill('#deeed6');
+        drawing.text(4, 12, game.score);
     }
 
 

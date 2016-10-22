@@ -95,8 +95,8 @@
         }
 
         collision(a, b) {
-            var box_a;
-            var box_b;
+            var box_a = this.getBox(a);
+            var box_b = this.getBox(b);
             if (!box_a || !box_b) return false;
             // negative space
             if (box_a.x1 > box_b.x2 || box_a.y1 > box_b.y2 || box_b.x1 > box_a.x2 
@@ -105,6 +105,16 @@
                 return false;
             }
             return true;
+        }
+
+        getBox(o) {
+            var box = {};
+            box.x1 = o.box.x1 + o.x;
+            box.x2 = o.box.x2 + o.x;
+            box.y1 = o.box.y1 + o.y;
+            box.y2 = o.box.y2 + o.y;
+
+            return box;
         }
     }
 

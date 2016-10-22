@@ -17,7 +17,10 @@
 
             this.width = 16;
             this.height = 16;
-            this.score = 0;
+
+            this.box = {
+                x1: 2, y1: 1, x2: 13, y2: 13
+            };
         }
 
         setSprite(img) {
