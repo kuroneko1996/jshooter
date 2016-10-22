@@ -9,10 +9,17 @@
     var stars = [];
     var enemies = [];
     var bullets = [];
+    var explosions = [];
 
     var bulletWidth = 2;
     var bulletHeight = 4;
     var bulletColor = '#d04648';
+
+    var explosionRadius = 4;
+    var explosionColors = ['#deeed6', '#d04648', '#d27d2c', '#dad45e'];
+    var explosionFrames = 13;
+    var enemyWidth = 16;
+    var enemyHeight = 16;
 
     var drawing = new Drawing('mycanvas');
     var game = new KGame({drawing: drawing, width: width, height: height, scl: scl});
@@ -58,27 +65,18 @@
     game.logic = function () {
         // update
         ship.update();
-        for (let i = stars.length - 1; i >= 0; i--) {
-            let star = stars[i];
-            star.y += star.speed;
-            if (star.y > game.height) {
-                star.x = game.rnd(1, game.width);
-                star.y = 0;
-            }
-        }
-        moveBullets();
+        updateEnemies();
+        updateBullets();
+        updateExplosions();
+        updateStars();
 
 
         // draw
-        for (let i = stars.length - 1; i >= 0; i--) {
-            drawing.rect(stars[i].x, stars[i].y, 2, 2, '#8595a1')
-        }
-        for (let i = enemies.length - 1; i >= 0; i--) {
-            drawing.context.drawImage(enemies[i].sprite, enemies[i].x, enemies[i].y);
-        }
-
+        drawStars();
         ship.draw();
+        drawEnemies();
         drawBullets();
+        drawExplosions();
         drawScore();
     };
 
@@ -87,7 +85,7 @@
     game.start();
 
     // functions
-    function moveBullets() {
+    function updateBullets() {
         for (var i = bullets.length - 1; i >= 0; i--) {
             let bullet = bullets[i];
             bullet.x += bullet.xspeed;
@@ -102,14 +100,69 @@
                 if (game.collision(bullet, enemy)) {
                     enemies.splice(i, 1);
                     game.score += 10;
+                    explode(enemy.x + enemyWidth / 2, enemy.y + enemyHeight / 2);
                 }
             });
+        }
+    }
+
+    function explode(x, y) {
+        explosions.push({
+            x: x, y: y, t: 0
+        });
+    }
+
+    function updateStars() {
+        for (let i = stars.length - 1; i >= 0; i--) {
+            let star = stars[i];
+            star.y += star.speed;
+            if (star.y > game.height) {
+                star.x = game.rnd(1, game.width);
+                star.y = 0;
+            }
+        }
+    }
+
+    function updateExplosions() {
+        explosions.forEach(function (explosion, i) {
+            explosion.t += 1;
+            if (explosion.t >= explosionFrames) {
+                explosions.splice(i, 1);
+            }
+        });
+    }
+
+    function updateEnemies() {
+        // TODO
+    }
+
+    function drawStars() {
+        for (let i = stars.length - 1; i >= 0; i--) {
+            drawing.rect(stars[i].x, stars[i].y, 2, 2, '#8595a1')
+        }
+    }
+
+    function drawEnemies() {
+        for (let i = enemies.length - 1; i >= 0; i--) {
+            drawing.context.drawImage(enemies[i].sprite, enemies[i].x, enemies[i].y);
         }
     }
 
     function drawBullets() {
         bullets.forEach(function (bullet) {
             drawing.rect(bullet.x, bullet.y, bulletWidth, bulletHeight, bulletColor);
+        });
+    }
+
+    function drawExplosions() {
+        var context = drawing.context;
+        explosions.forEach(function (explosion) {
+            context.beginPath();
+            context.arc(explosion.x, explosion.y, explosion.t/2 + explosionRadius, 0, 2 * Math.PI, false);
+
+            context.lineWidth = 1.2;
+            context.strokeStyle = explosionColors[explosion.t % 3]; // check?
+            context.stroke();
         });
     }
 
