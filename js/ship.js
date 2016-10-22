@@ -72,7 +72,7 @@
                 x: this.x + this.width / 2 - this.bulletWidth / 2,
                 y: this.y - 2,
                 xspeed: 0,
-                yspeed: -3
+                yspeed: -this.speed-1
             };
             this.bullets.push(bullet);
         }
@@ -85,6 +85,7 @@
             if (Key.isDown(Key.LEFT)) this.xdir = -1;
             if (Key.isDown(Key.RIGHT)) this.xdir = 1;
             if (Key.isDown(Key.SPACE)) this.fire();
+            if (Key.isDown(Key.Z)) this.fire();
 
             this.move();
             this.moveBullets();

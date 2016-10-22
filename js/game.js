@@ -22,6 +22,7 @@
                 RIGHT:    39,
                 DOWN:     40,
                 SPACE:    32,
+                Z:        90,
 
                 _pressed: {},
 
@@ -63,12 +64,18 @@
         addKeyboardInput() {
             var self = this;
             document.addEventListener('keydown', function(event) {
-                event.preventDefault();
+                if (self.getKeyByValue(self.Key, event.keyCode)) {
+                    event.preventDefault();
+                }
+
                 self.Key.onKeydown(event);
             }, false);
 
             document.addEventListener('keyup', function(event) {
-                event.preventDefault();
+                if (self.getKeyByValue(self.Key, event.keyCode)) {
+                    event.preventDefault();
+                }
+                
                 self.Key.onKeyup(event);
             }, false);
         }
@@ -81,6 +88,10 @@
         rnd(min, max)
         {
           return Math.floor(Math.random() * (max - min)) + min;
+        }
+
+        getKeyByValue(object, value) {
+          return Object.keys(object).find(key => object[key] === value);
         }
     }
 
