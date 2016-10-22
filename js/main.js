@@ -4,6 +4,8 @@
     var height = 256;
     var scl = 1;
 
+    var maxHealth = 4;
+
     var sprites = loadAssets();
 
     var stars = [];
@@ -78,6 +80,7 @@
         drawBullets();
         drawExplosions();
         drawScore();
+        drawHealth();
     };
 
     assignTouchControls();
@@ -133,7 +136,14 @@
     }
 
     function updateEnemies() {
-        // TODO
+        enemies.forEach(function (enemy) {
+            if (game.collision(enemy, ship) && !ship.immortality) {
+                ship.takeLife();
+                if (ship.hp == 0) {
+                    // TODO
+                }
+            }
+        });
     }
 
     function drawStars() {
@@ -171,6 +181,18 @@
         drawing.text(4, 12, game.score);
     }
 
+    function drawHealth() {
+        for (let i = 1; i <= maxHealth; i++) {
+            let x = game.width - (10 * maxHealth + 12) + i * 10;
+            let y = 4;
+            if (i <= ship.hp) {
+                drawing.context.drawImage(sprites['heart'], x, y);
+            } else {
+                drawing.context.drawImage(sprites['heart_g'], x, y);
+            }
+        }
+    }
+
 
     function assignTouchControls() {
         var name2dir = {
@@ -188,6 +210,8 @@
         let sprites = [];
         sprites['ship'] = document.getElementById('ship_image')
         sprites['enemy1'] = document.getElementById('enemy1_image');
+        sprites['heart'] = document.getElementById('heart_image');
+        sprites['heart_g'] = document.getElementById('heart_g_image');
         return sprites;
     }
 })();

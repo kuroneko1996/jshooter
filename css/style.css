@@ -24,6 +24,13 @@ body {
     display: block;
 }
 
+.instructions {
+    font: 12px "Lucida Console", Monaco, monospace;
+    color: #deeed6;
+    text-align: center;
+    margin-top: 5px;
+}
+
 .control-buttons {
     width: 200px;
     min-height: 200px;

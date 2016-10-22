@@ -12,6 +12,10 @@
 
             this.color = '#597dce';
             this.speed = 4;
+            this.hp = 4;
+            this.immortality = false;
+            this.immortalityTimer = 0;
+            this.immortalityFrames = 30;
 
             this.xdir = this.ydir = 0;
 
@@ -58,6 +62,12 @@
             this.ydir = y;
         }
 
+        takeLife() {
+            this.immortality = 1;
+            this.immortalityTimer = 0;
+            this.hp -= 1;
+        }
+
         update() {
             // handle player's input
             let Key = this.Key;
@@ -71,13 +81,19 @@
             this.move();
 
             this.xdir = this.ydir = 0;
+
+            if (this.immortality) {
+                this.immortalityTimer += 1;
+
+                if (this.immortalityTimer > this.immortalityFrames) {
+                    this.immortality = false;
+                    this.immortalityTimer = 0;
+                }
+            }
         }
 
         draw() {
-            var self = this;
-            if (!this.sprite) {
-                this.drawing.rect(this.x, this.y, this.width, this.height, this.color);
-            } else {
+            if (!this.immortality || (this.immortalityTimer % 8) < 4) {
                 this.drawing.context.drawImage(this.sprite, this.x, this.y);
             }
         }

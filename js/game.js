@@ -100,7 +100,7 @@
             if (!box_a || !box_b) return false;
             // negative space
             if (box_a.x1 > box_b.x2 || box_a.y1 > box_b.y2 || box_b.x1 > box_a.x2 
-                || box_b.y1 > box_b.y2) 
+                || box_b.y1 > box_a.y2) 
             {
                 return false;
             }

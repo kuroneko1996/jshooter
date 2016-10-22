@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Space Shooter rev13</title>
+	<title>Space Shooter rev14</title>
 	<meta name="viewport" content="width=device-width, user-scalable=no">
-	<link rel="stylesheet" type="text/css" href="css/style.css?rev13">
-	<script type="text/javascript" src="js/drawing.js?rev13"></script>
-	<script type="text/javascript" src="js/game.js?rev13"></script>
-	<script type="text/javascript" src="js/ship.js?rev13"></script>
+	<link rel="stylesheet" type="text/css" href="css/style.css?rev14">
+	<script type="text/javascript" src="js/drawing.js?rev14"></script>
+	<script type="text/javascript" src="js/game.js?rev14"></script>
+	<script type="text/javascript" src="js/ship.js?rev14"></script>
 </head>
 <body>
 <div id="container">
 	<canvas id="mycanvas" width="256" height="256"></canvas>
-	<div class="control-buttons">
+	<div class="instructions">arrows for movement, z or space to fire</div>
+	<div class="control-buttons" style="display:none">
 		<div id="arrow_up" class="control-button"></div>
 		<div class="horizontal-buttons">
 			<div id="arrow_left" class="control-button"></div><div id="arrow_right" class="control-button"></div>
@@ -20,8 +21,10 @@
 	</div>
 	<img src="imgs/ship.png" id="ship_image" style="display:none">
 	<img src="imgs/enemy1.png" id="enemy1_image" style="display:none">
+	<img src="imgs/heart.png" id="heart_image" style="display:none">
+	<img src="imgs/heart_g.png" id="heart_g_image" style="display:none">
 </div>
 
-<script type="text/javascript" src="js/main.js?rev13"></script>
+<script type="text/javascript" src="js/main.js?rev14"></script>
 </body>
 </html>
