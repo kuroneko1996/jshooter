@@ -15,7 +15,7 @@
             this.hp = 4;
             this.immortality = false;
             this.immortalityTimer = 0;
-            this.immortalityFrames = 30;
+            this.immortalityFrames = 60;
 
             this.xdir = this.ydir = 0;
 

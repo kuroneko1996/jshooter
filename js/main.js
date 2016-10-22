@@ -1,5 +1,8 @@
 "use strict";
 (function () {
+    var STATES = {INIT: 0, PLAYING: 0, GAMEOVER: 1};
+    var gameState = STATES.INIT;
+
     var width = 256;
     var height = 256;
     var scl = 1;
@@ -42,7 +45,7 @@
         bullets.push(bullet);
     });
 
-
+    // stars
     for (let i = 0; i < 128; i++) {
         stars.push({
             x: game.rnd(0, game.width),
@@ -50,41 +53,36 @@
             speed: game.rnd(1, 4) + 1
         });
     }
-
-    for (let i = 0; i < 10; i++) {
-        enemies.push({
-            x: 8 + i*32,
-            y: 40 + i*8,
-            sprite: sprites['enemy1'],
-            box: {
-                x1: 1, y1: 4, x2: 14, y2: 11
-            }
-        });
-    }
+    respawnEnemies(4);
 
     game.addKeyboardInput();
 
     game.logic = function () {
-        // update
-        ship.update();
-        updateEnemies();
-        updateBullets();
-        updateExplosions();
-        updateStars();
+        if (gameState === STATES.PLAYING) {
+            // update
+            ship.update();
+            updateEnemies();
+            updateBullets();
+            updateExplosions();
+            updateStars();
 
 
-        // draw
-        drawStars();
-        ship.draw();
-        drawEnemies();
-        drawBullets();
-        drawExplosions();
-        drawScore();
-        drawHealth();
+            // draw
+            drawStars();
+            ship.draw();
+            drawEnemies();
+            drawBullets();
+            drawExplosions();
+            drawScore();
+            drawHealth();
+        } else if (gameState == STATES.GAMEOVER) {
+            drawGameOver();
+        }
     };
 
     assignTouchControls();
 
+    gameState = STATES.PLAYING;
     game.start();
 
     // functions
@@ -136,12 +134,22 @@
     }
 
     function updateEnemies() {
-        enemies.forEach(function (enemy) {
+        if (enemies.length < 1) {
+            respawnEnemies(4);
+        }
+
+        enemies.forEach(function (enemy, i) {
+            enemy.y += 2;
+
             if (game.collision(enemy, ship) && !ship.immortality) {
                 ship.takeLife();
                 if (ship.hp == 0) {
-                    // TODO
+                    gameState = STATES.GAMEOVER;
                 }
+            }
+
+            if (enemy.y > (game.height + 40)) {
+                enemies.splice(i, 1);
             }
         });
     }
@@ -193,6 +201,25 @@
         }
     }
 
+    function drawGameOver() {
+        drawing.fill('#d04648');
+        drawing.text(game.width / 2 - 35, game.height / 2 - 12, "GAME OVER");
+        drawing.fill('#deeed6');
+        drawing.text(game.width / 2 - 60, game.height / 2 + 8, "refresh to restart")
+    }
+
+    function respawnEnemies(number = 4) {
+        for (let i = 0; i < number; i++) {
+            enemies.push({
+                x: 8 + i*32,
+                y: -64 + i*8,
+                sprite: sprites['enemy1'],
+                box: {
+                    x1: 1, y1: 4, x2: 14, y2: 11
+                }
+            });
+        }
+    }
 
     function assignTouchControls() {
         var name2dir = {
