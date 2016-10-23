@@ -1,6 +1,6 @@
 "use strict";
 (function () {
-    var STATES = {INIT: 0, MENU: 1, PLAYING: 2, GAMEOVER: 3};
+    var STATES = {INIT: 0, MENU: 1, PLAYING: 2, GAMEOVER: 3, PAUSED: 4};
     var gameState = STATES.INIT;
 
     var width = 256;
@@ -55,6 +55,9 @@
                     }
                 };
             bullets.push(bullet);
+            if (game.score - 1 > 0) {
+                game.score -= 1;
+            }
             sounds['laser_shoot'].play();
         });
 
@@ -71,11 +74,23 @@
         game.addKeyboardInput();
 
         game.logic = function () {
-            if (gameState === STATES.PLAYING) {
+            if (gameState === STATES.PAUSED) {
+                if (game.Key.isDown(game.Key.SPACE)) {
+                    gameState = STATES.PLAYING;
+                    game.Key.clear(game.Key.SPACE);
+                }
+                drawPauseScreen();
+            } else if (gameState === STATES.PLAYING) {
                 t += 1;
                 if (t > 5000) { // prevent overflow
                     t = 1;
                 }
+
+                if (game.Key.isDown(game.Key.P)) {
+                    gameState = STATES.PAUSED;
+                    return;
+                }
+
                 // update
                 ship.update();
                 updateEnemies();
@@ -99,7 +114,7 @@
 
         assignTouchControls();
 
-        gameState = STATES.PLAYING;
+        gameState = STATES.PAUSED;
         game.start();
     }   
     
@@ -117,7 +132,7 @@
             enemies.forEach(function (enemy, i) {
                 if (game.collision(bullet, enemy)) {
                     enemies.splice(i, 1);
-                    game.score += 10;
+                    game.score += enemy.score;
                     explode(enemy.x + enemyWidth / 2, enemy.y + enemyHeight / 2);
                 }
             });
@@ -226,8 +241,17 @@
     function drawGameOver() {
         drawing.fill('#d04648');
         drawing.text(game.width / 2 - 35, game.height / 2 - 12, "GAME OVER");
+
         drawing.fill('#deeed6');
-        drawing.text(game.width / 2 - 60, game.height / 2 + 8, "refresh to restart")
+        drawing.text(game.width / 2 - 32, game.height / 2 + 8, game.zeropad(game.score, 8));
+        drawing.text(game.width / 2 - 65, game.height / 2 + 12 + 12, "refresh to restart")
+    }
+
+    function drawPauseScreen() {
+        drawing.fill('#deeed6');
+        drawing.text(game.width / 2 - 25, game.height / 2 - 12, "PAUSED");
+
+        drawing.text(game.width / 2 - 72, game.height / 2 + 12, "press space to resume")
     }
 
     function respawnEnemies() {
@@ -250,7 +274,8 @@
                 sprite: sprites['enemy1'],
                 box: {
                     x1: 1, y1: 4, x2: 14, y2: 11
-                }
+                },
+                score: 25
             });
         }
     }

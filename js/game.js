@@ -23,6 +23,7 @@
                 DOWN:     40,
                 SPACE:    32,
                 Z:        90,
+                P:        80,
 
                 _pressed: {},
 
@@ -34,6 +35,9 @@
                 },
                 onKeyup: function(event) {
                     delete this._pressed[event.keyCode];
+                },
+                clear: function(keyCode) {
+                    delete this._pressed[keyCode];
                 }
             }
         }
@@ -115,6 +119,11 @@
             box.y2 = o.box.y2 + o.y;
 
             return box;
+        }
+
+        zeropad(str, max) {
+            str = str.toString();
+            return str.length < max ? this.zeropad("0" + str, max) : str;
         }
     }
 
