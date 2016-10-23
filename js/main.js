@@ -6,6 +6,7 @@
     var width = 256;
     var height = 256;
     var scl = 1;
+    var t = 0; // frame counter
 
     var maxHealth = 4;
 
@@ -53,12 +54,16 @@
             speed: game.rnd(1, 4) + 1
         });
     }
-    respawnEnemies(4);
+    respawnEnemies();
 
     game.addKeyboardInput();
 
     game.logic = function () {
         if (gameState === STATES.PLAYING) {
+            t += 1;
+            if (t > 5000) { // prevent overflow
+                t = 1;
+            }
             // update
             ship.update();
             updateEnemies();
@@ -135,14 +140,17 @@
 
     function updateEnemies() {
         if (enemies.length < 1) {
-            respawnEnemies(4);
+            respawnEnemies();
         }
 
         enemies.forEach(function (enemy, i) {
-            enemy.y += 2;
+            // sine wave
+            enemy.startY += 3;
+            enemy.x = 12 * Math.sin(enemy.d * t/6) + enemy.startX;
+            enemy.y = 12 * Math.cos(t/6) + enemy.startY;
 
             if (game.collision(enemy, ship) && !ship.immortality) {
-                ship.takeLife();
+                ship.loseLife();
                 if (ship.hp == 0) {
                     gameState = STATES.GAMEOVER;
                 }
@@ -208,11 +216,23 @@
         drawing.text(game.width / 2 - 60, game.height / 2 + 8, "refresh to restart")
     }
 
-    function respawnEnemies(number = 4) {
+    function respawnEnemies() {
+        let maxEnemies = 8;
+        let minEmenies = 2;
+        let number = game.rnd(minEmenies, maxEnemies);
+
         for (let i = 0; i < number; i++) {
+            let d = -1; // sine wave direction
+            if (Math.random() < 0.5) {
+                d = 1;
+            }
+
             enemies.push({
-                x: 8 + i*32,
-                y: -64 + i*8,
+                x: 0,
+                y: -64,
+                startX: 12 + i*32,
+                startY: -64 + i*8,
+                d: d,
                 sprite: sprites['enemy1'],
                 box: {
                     x1: 1, y1: 4, x2: 14, y2: 11

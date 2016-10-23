@@ -62,7 +62,7 @@
             this.ydir = y;
         }
 
-        takeLife() {
+        loseLife() {
             this.immortality = 1;
             this.immortalityTimer = 0;
             this.hp -= 1;
