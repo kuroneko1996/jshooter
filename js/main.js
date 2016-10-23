@@ -1,6 +1,6 @@
 "use strict";
 (function () {
-    var STATES = {INIT: 0, PLAYING: 0, GAMEOVER: 1};
+    var STATES = {INIT: 0, MENU: 1, PLAYING: 2, GAMEOVER: 3};
     var gameState = STATES.INIT;
 
     var width = 256;
@@ -9,8 +9,6 @@
     var t = 0; // frame counter
 
     var maxHealth = 4;
-
-    var sprites = loadAssets();
 
     var stars = [];
     var enemies = [];
@@ -31,66 +29,80 @@
     var game = new KGame({drawing: drawing, width: width, height: height, scl: scl});
     drawing.font('12px "Lucida Console", Monaco, monospace');
     var ship = new KGame.Ship(game, width / 2, height - 40);
-    ship.setSprite(sprites['ship']);
 
-    ship.setFire(function() {
-        let bullet = {
-                x: this.x + this.width / 2 - bulletWidth / 2,
-                y: this.y - 2,
-                xspeed: 0,
-                yspeed: -this.speed-1,
-                box: {
-                    x1: 0, y1: 0, x2: bulletWidth, y2: bulletHeight
-                }
-            };
-        bullets.push(bullet);
-    });
-
-    // stars
-    for (let i = 0; i < 128; i++) {
-        stars.push({
-            x: game.rnd(0, game.width),
-            y: game.rnd(0, game.height),
-            speed: game.rnd(1, 4) + 1
-        });
-    }
-    respawnEnemies();
-
-    game.addKeyboardInput();
-
-    game.logic = function () {
-        if (gameState === STATES.PLAYING) {
-            t += 1;
-            if (t > 5000) { // prevent overflow
-                t = 1;
-            }
-            // update
-            ship.update();
-            updateEnemies();
-            updateBullets();
-            updateExplosions();
-            updateStars();
-
-
-            // draw
-            drawStars();
-            ship.draw();
-            drawEnemies();
-            drawBullets();
-            drawExplosions();
-            drawScore();
-            drawHealth();
-        } else if (gameState == STATES.GAMEOVER) {
-            drawGameOver();
-        }
-    };
-
-    assignTouchControls();
-
-    gameState = STATES.PLAYING;
-    game.start();
+    // loading assets and starting game
+    var sounds = {};
+    var sprites = {};
+    var soundFileNames = ['explosion', 'hit_hurt', 'laser_shoot'];
+    var spriteFileNames = ['ship', 'enemy1', 'heart', 'heart_g'];
+    loadSprites(spriteFileNames).then(function (loadedSprites) {
+        sprites = loadedSprites;
+    }).then(loadSounds(soundFileNames).then(function (loadedSounds) {
+        sounds = loadedSounds;
+    })).then(startGame);
 
     // functions
+    function startGame() {
+        ship.setSprite(sprites['ship']);
+        ship.setFire(function() {
+            let bullet = {
+                    x: this.x + this.width / 2 - bulletWidth / 2,
+                    y: this.y - 2,
+                    xspeed: 0,
+                    yspeed: -this.speed-1,
+                    box: {
+                        x1: 0, y1: 0, x2: bulletWidth, y2: bulletHeight
+                    }
+                };
+            bullets.push(bullet);
+            sounds['laser_shoot'].play();
+        });
+
+        // stars
+        for (let i = 0; i < 128; i++) {
+            stars.push({
+                x: game.rnd(0, game.width),
+                y: game.rnd(0, game.height),
+                speed: game.rnd(1, 4) + 1
+            });
+        }
+        respawnEnemies();
+
+        game.addKeyboardInput();
+
+        game.logic = function () {
+            if (gameState === STATES.PLAYING) {
+                t += 1;
+                if (t > 5000) { // prevent overflow
+                    t = 1;
+                }
+                // update
+                ship.update();
+                updateEnemies();
+                updateBullets();
+                updateExplosions();
+                updateStars();
+
+
+                // draw
+                drawStars();
+                ship.draw();
+                drawEnemies();
+                drawBullets();
+                drawExplosions();
+                drawScore();
+                drawHealth();
+            } else if (gameState == STATES.GAMEOVER) {
+                drawGameOver();
+            }
+        };
+
+        assignTouchControls();
+
+        gameState = STATES.PLAYING;
+        game.start();
+    }   
+    
     function updateBullets() {
         for (var i = bullets.length - 1; i >= 0; i--) {
             let bullet = bullets[i];
@@ -116,6 +128,7 @@
         explosions.push({
             x: x, y: y, t: 0
         });
+        sounds['explosion'].play();
     }
 
     function updateStars() {
@@ -154,6 +167,7 @@
                 if (ship.hp == 0) {
                     gameState = STATES.GAMEOVER;
                 }
+                sounds['hit_hurt'].play();
             }
 
             if (enemy.y > (game.height + 40)) {
@@ -253,12 +267,35 @@
         }
     }
 
-    function loadAssets() {
-        let sprites = [];
-        sprites['ship'] = document.getElementById('ship_image')
-        sprites['enemy1'] = document.getElementById('enemy1_image');
-        sprites['heart'] = document.getElementById('heart_image');
-        sprites['heart_g'] = document.getElementById('heart_g_image');
-        return sprites;
+    function loadSounds(names) {
+        return new Promise(function (resolve, reject) {
+            var result = {};
+            var count = names.length;
+            var canplay = function () {
+                if (--count == 0) resolve(result);
+            }
+            for (let i = 0; i < names.length; i++) {
+                let name = names[i];
+                result[name] = document.createElement('audio');
+                result[name].addEventListener('canplay', canplay, false);
+                result[name].src = 'sounds/' + name + '.mp3';
+            }
+        });
+    }
+
+    function loadSprites(names) {
+        return new Promise(function (resolve, reject) {
+            var result = {};
+            var count = names.length;
+            var onload = function () {
+                if (--count == 0) resolve(result);
+            }
+            for (let i = 0; i < names.length; i++) {
+                let name = names[i];
+                result[name] = document.createElement('img');
+                result[name].addEventListener('load', onload);
+                result[name].src = 'imgs/' + name + '.png';
+            }
+        });  
     }
 })();
