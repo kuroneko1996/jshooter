@@ -77,7 +77,7 @@
             if (gameState === STATES.PAUSED) {
                 if (game.Key.isDown(game.Key.SPACE)) {
                     gameState = STATES.PLAYING;
-                    game.Key.clear(game.Key.SPACE);
+                    game.Key.clear(game.Key.SPACE); // prevent shooting
                 }
                 drawPauseScreen();
             } else if (gameState === STATES.PLAYING) {

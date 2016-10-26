@@ -11,7 +11,7 @@
             this.Key = game.Key;
 
             this.color = '#597dce';
-            this.speed = 4;
+            this.speed = 5;
             this.hp = 4;
             this.immortality = false;
             this.immortalityTimer = 0;
@@ -25,6 +25,8 @@
             this.box = {
                 x1: 2, y1: 1, x2: 13, y2: 13
             };
+
+            this.diagonalSpeedFactor = 0.7071;
         }
 
         setSprite(img) {
@@ -36,8 +38,16 @@
         }
 
         move() {
-            var newX = this.x + this.xdir * this.speed;
-            var newY = this.y + this.ydir * this.speed;
+            var velocityX = this.xdir * this.speed;
+            var velocityY = this.ydir * this.speed;
+
+            if (Math.abs(velocityX) > 0 && Math.abs(velocityY) > 0) { // diagonal movement
+                velocityX *= this.diagonalSpeedFactor;
+                velocityY *= this.diagonalSpeedFactor;
+            }
+
+            var newX = this.x + velocityX;
+            var newY = this.y + velocityY;
 
             // reposition near bounds
             if (newX < 0) {
