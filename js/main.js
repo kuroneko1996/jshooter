@@ -20,7 +20,8 @@
     var bulletHeight = 4*sprScale;
     var bulletColor = '#d04648';
 
-    var explosionRadius = 4;
+    var explosionRadius = 4*sprScale;
+    var explosionLineWidth = 2;
     var explosionColors = ['#deeed6', '#d04648', '#d27d2c', '#dad45e'];
     var explosionFrames = 13;
     var enemyWidth = 32;
@@ -32,7 +33,10 @@
     drawing.font('12px "Lucida Console", Monaco, monospace');
 
     var shipBoundingBox = { x1: 1*sprScale, y1: 3*sprScale, x2: 14*sprScale, y2: 14*sprScale };
-    var ship = new KGame.Ship(game, width / 2, height - 40, 32, 32, shipBoundingBox);
+    var ship = new KGame.Ship(game, width / 2, height - 40, 7, 32, 32, shipBoundingBox);
+
+    var shakeDuration = 800;
+    var shakeStartTime = -1;
 
     // loading assets and starting game
     var sounds = {};
@@ -104,6 +108,8 @@
 
 
                 // draw
+                preShake();
+
                 drawStars();
                 ship.draw();
                 drawEnemies();
@@ -111,6 +117,8 @@
                 drawExplosions();
                 drawScore();
                 drawHealth();
+
+                postShake();
             } else if (gameState == STATES.GAMEOVER) {
                 drawGameOver();
             }
@@ -187,6 +195,7 @@
                     gameState = STATES.GAMEOVER;
                 }
                 sounds['hit_hurt'].play();
+                startShake();
             }
 
             if (enemy.y > (game.height + 40)) {
@@ -219,7 +228,7 @@
             context.beginPath();
             context.arc(explosion.x, explosion.y, explosion.t/2 + explosionRadius, 0, 2 * Math.PI, false);
 
-            context.lineWidth = 1.2;
+            context.lineWidth = explosionLineWidth;
             context.strokeStyle = explosionColors[explosion.t % 3]; // check?
             context.stroke();
         });
@@ -324,5 +333,29 @@
                 result[name].src = 'imgs/' + name + '.png';
             }
         });  
+    }
+
+    function preShake() {
+      if (shakeStartTime == -1) return;
+      var dt = Date.now()-shakeStartTime;
+      if (dt > shakeDuration) {
+          shakeStartTime = -1; 
+          return;
+      }
+      var easingCoef = dt / shakeDuration;
+      var easing = Math.pow(easingCoef-1,3) +1;
+      drawing.context.save();  
+      var dx = easing*(Math.cos(dt*0.1 ) + Math.cos( dt *0.3115))*12;
+      var dy = easing*(Math.sin(dt*0.05) + Math.sin(dt*0.057113))*12;
+      drawing.context.translate(dx, dy);  
+    }
+
+    function postShake() {
+      if (shakeStartTime == -1) return;
+      drawing.context.restore();
+    }
+
+    function startShake() {
+       shakeStartTime = Date.now();
     }
 })();

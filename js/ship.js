@@ -2,7 +2,7 @@
 (function () {
 
     class Ship {
-        constructor(game, startX = 0, startY = 0, width = 16, height = 16, boundingBox) {
+        constructor(game, startX = 0, startY = 0, speed = 5, width = 16, height = 16, boundingBox) {
             this.x = this.startX = startX;
             this.y = this.startY = startY;
 
@@ -11,7 +11,7 @@
             this.Key = game.Key;
 
             this.color = '#597dce';
-            this.speed = 5;
+            this.speed = speed;
             this.hp = 4;
             this.immortality = false;
             this.immortalityTimer = 0;
