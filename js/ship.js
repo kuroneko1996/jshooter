@@ -96,7 +96,7 @@
 
             this.move();
 
-            if (!this.propulsion && (this.xdir != 0) || (this.ydir != 0)) {
+            if (!this.propulsion && this.ydir < 0) {
                 this.propulsion = true;
             }
 
