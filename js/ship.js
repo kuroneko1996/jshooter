@@ -2,7 +2,7 @@
 (function () {
 
     class Ship {
-        constructor(game, startX = 0, startY = 0) {
+        constructor(game, startX = 0, startY = 0, width = 16, height = 16, boundingBox) {
             this.x = this.startX = startX;
             this.y = this.startY = startY;
 
@@ -19,12 +19,10 @@
 
             this.xdir = this.ydir = 0;
 
-            this.width = 16;
-            this.height = 16;
+            this.width = width;
+            this.height = height;
 
-            this.box = {
-                x1: 2, y1: 1, x2: 13, y2: 13
-            };
+            this.box = boundingBox;
 
             this.diagonalSpeedFactor = 0.7071;
         }

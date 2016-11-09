@@ -6,6 +6,7 @@
     var width = 256;
     var height = 256;
     var scl = 1;
+    var sprScale = 2;
     var t = 0; // frame counter
 
     var maxHealth = 4;
@@ -15,26 +16,29 @@
     var bullets = [];
     var explosions = [];
 
-    var bulletWidth = 2;
-    var bulletHeight = 4;
+    var bulletWidth = 2*sprScale;
+    var bulletHeight = 4*sprScale;
     var bulletColor = '#d04648';
 
     var explosionRadius = 4;
     var explosionColors = ['#deeed6', '#d04648', '#d27d2c', '#dad45e'];
     var explosionFrames = 13;
-    var enemyWidth = 16;
-    var enemyHeight = 16;
+    var enemyWidth = 32;
+    var enemyHeight = 32;
+    var enemyBoundingBox = { x1: 1*sprScale, y1: 4*sprScale, x2: 14*sprScale, y2: 11*sprScale };
 
     var drawing = new Drawing('mycanvas');
     var game = new KGame({drawing: drawing, width: width, height: height, scl: scl});
     drawing.font('12px "Lucida Console", Monaco, monospace');
-    var ship = new KGame.Ship(game, width / 2, height - 40);
+
+    var shipBoundingBox = { x1: 1*sprScale, y1: 3*sprScale, x2: 14*sprScale, y2: 14*sprScale };
+    var ship = new KGame.Ship(game, width / 2, height - 40, 32, 32, shipBoundingBox);
 
     // loading assets and starting game
     var sounds = {};
     var sprites = {};
     var soundFileNames = ['explosion', 'hit_hurt', 'laser_shoot'];
-    var spriteFileNames = ['ship', 'enemy1', 'heart', 'heart_g'];
+    var spriteFileNames = ['ship_2', 'enemy1', 'heart', 'heart_g'];
     loadSprites(spriteFileNames).then(function (loadedSprites) {
         sprites = loadedSprites;
     }).then(loadSounds(soundFileNames).then(function (loadedSounds) {
@@ -43,7 +47,7 @@
 
     // functions
     function startGame() {
-        ship.setSprite(sprites['ship']);
+        ship.setSprite(sprites['ship_2']);
         ship.setFire(function() {
             let bullet = {
                     x: this.x + this.width / 2 - bulletWidth / 2,
@@ -228,8 +232,8 @@
 
     function drawHealth() {
         for (let i = 1; i <= maxHealth; i++) {
-            let x = game.width - (10 * maxHealth + 12) + i * 10;
-            let y = 4;
+            let x = game.width - (10 * maxHealth * sprScale + 12 * sprScale) + i * 10 * sprScale;
+            let y = 4 * sprScale;
             if (i <= ship.hp) {
                 drawing.context.drawImage(sprites['heart'], x, y);
             } else {
@@ -272,9 +276,7 @@
                 startY: -64 + i*8,
                 d: d,
                 sprite: sprites['enemy1'],
-                box: {
-                    x1: 1, y1: 4, x2: 14, y2: 11
-                },
+                box: enemyBoundingBox,
                 score: 25
             });
         }
