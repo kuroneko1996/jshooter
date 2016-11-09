@@ -37,12 +37,13 @@
 
     var shakeDuration = 800;
     var shakeStartTime = -1;
+    var shakeFactor = 9;
 
     // loading assets and starting game
     var sounds = {};
     var sprites = {};
     var soundFileNames = ['explosion', 'hit_hurt', 'laser_shoot'];
-    var spriteFileNames = ['ship_2', 'enemy1', 'heart', 'heart_g'];
+    var spriteFileNames = ['ship_2', 'propulsion', 'enemy1', 'heart', 'heart_g'];
     loadSprites(spriteFileNames).then(function (loadedSprites) {
         sprites = loadedSprites;
     }).then(loadSounds(soundFileNames).then(function (loadedSounds) {
@@ -52,6 +53,7 @@
     // functions
     function startGame() {
         ship.setSprite(sprites['ship_2']);
+        ship.setPropulsionSprite(sprites['propulsion']);
         ship.setFire(function() {
             let bullet = {
                     x: this.x + this.width / 2 - bulletWidth / 2,
@@ -111,7 +113,7 @@
                 preShake();
 
                 drawStars();
-                ship.draw();
+                ship.draw(t);
                 drawEnemies();
                 drawBullets();
                 drawExplosions();
@@ -345,8 +347,8 @@
       var easingCoef = dt / shakeDuration;
       var easing = Math.pow(easingCoef-1,3) +1;
       drawing.context.save();  
-      var dx = easing*(Math.cos(dt*0.1 ) + Math.cos( dt *0.3115))*12;
-      var dy = easing*(Math.sin(dt*0.05) + Math.sin(dt*0.057113))*12;
+      var dx = easing*(Math.cos(dt*0.1 ) + Math.cos( dt *0.3115))*shakeFactor;
+      var dy = easing*(Math.sin(dt*0.05) + Math.sin(dt*0.057113))*shakeFactor;
       drawing.context.translate(dx, dy);  
     }
 

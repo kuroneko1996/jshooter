@@ -25,10 +25,18 @@
             this.box = boundingBox;
 
             this.diagonalSpeedFactor = 0.7071;
+
+            this.propulsion = false;
+            this.propulsionTimer = 0;
+            this.propulsionFrames = 10;
         }
 
         setSprite(img) {
             this.sprite = img;
+        }
+
+        setPropulsionSprite(img) {
+            this.propulsionSprite = img;
         }
 
         setFire(func) {
@@ -88,6 +96,10 @@
 
             this.move();
 
+            if (!this.propulsion && (this.xdir != 0) || (this.ydir != 0)) {
+                this.propulsion = true;
+            }
+
             this.xdir = this.ydir = 0;
 
             if (this.immortality) {
@@ -98,11 +110,24 @@
                     this.immortalityTimer = 0;
                 }
             }
+
+            if (this.propulsion) {
+                this.propulsionTimer += 1;
+
+                if (this.propulsionTimer > this.propulsionFrames) {
+                    this.propulsion = false;
+                    this.propulsionTimer = 0;
+                }
+            }
         }
 
-        draw() {
+        draw(t) {
             if (!this.immortality || (this.immortalityTimer % 8) < 4) {
                 this.drawing.context.drawImage(this.sprite, this.x, this.y);
+            }
+
+            if (this.propulsion && (this.propulsionTimer % 4)) {
+                this.drawing.context.drawImage(this.propulsionSprite, this.x, this.y + this.height);
             }
         }
     }
